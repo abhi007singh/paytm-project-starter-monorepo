@@ -8,7 +8,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    # timeout-minutes: 30
     steps:
       - name: Check Out Repo
         uses: actions/checkout@v2
@@ -19,18 +18,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./docker/Dockerfile.user
           push: true
-          tags: sorak007/paytm-user-app:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: sorak007/paytm-user-app:latest # Replace with your Docker Hub username and repository
 
       - name: Verify Pushed Image
-        run: docker pull sorak007/paytm-user-app:latest
+        run: docker pull sorak007/paytm-user-app:latest # Replace with your Docker Hub username and repository
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -39,8 +36,6 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            set -x
-            sudo docker system prune -af
             sudo docker pull sorak007/paytm-user-app:latest
             sudo docker stop web-app || true
             sudo docker rm web-app || true
