@@ -36,6 +36,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            echo "$SSH_KEY" > private_key && chmod 600 private_key
+            echo $SSH_USERNAME
             sudo docker pull sorak007/paytm-user-app:latest
             sudo docker stop web-app || true
             sudo docker rm web-app || true
