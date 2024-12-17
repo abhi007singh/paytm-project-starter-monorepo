@@ -3,7 +3,7 @@ name: Build and Deploy to Docker Hub
 on:
   push:
     branches:
-      - migration
+      - migration # Adjusted to trigger on pushes to master
 
 jobs:
   build-and-push:
@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: Check Out Repo
         uses: actions/checkout@v2
+
+      - name: Prepare Dockerfile
+        run: cp ./docker/Dockerfile.user ./Dockerfile
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
@@ -22,12 +25,12 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./docker/Dockerfile.user
+          file: ./Dockerfile
           push: true
-          tags: sorak007/paytm-user-app:latest # Replace with your Docker Hub username and repository
+          tags: sorak007/paytm-user-app:latest
 
       - name: Verify Pushed Image
-        run: docker pull sorak007/paytm-user-app:latest # Replace with your Docker Hub username and repository
+        run: docker pull sorak007/paytm-user-app:latest
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
